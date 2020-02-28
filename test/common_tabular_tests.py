@@ -465,6 +465,7 @@ class VerifyTabularTests(object):
             policy = {ExplainParams.SAMPLING_POLICY: SamplingPolicy(allow_eval_sampling=True)}
         else:
             policy = {}
+        import pdb; pdb.set_trace()
         if include_evaluation_examples:
             if true_labels_required:
                 explainer.explain_global(x_test, y_test, **policy)

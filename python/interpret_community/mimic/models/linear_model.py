@@ -70,10 +70,12 @@ def _compute_local_shap_values(linear_explainer, evaluation_examples, classifica
         shap_values = []
         for explainer in linear_explainer:
             explainer_shap_values = explainer.shap_values(evaluation_examples)
+            import pdb; pdb.set_trace()
             if isinstance(explainer_shap_values, list):
                 explainer_shap_values = explainer_shap_values[0]
             shap_values.append(explainer_shap_values)
         return shap_values
+    import pdb; pdb.set_trace()
     shap_values = linear_explainer.shap_values(evaluation_examples)
     if not classification and isinstance(shap_values, list):
         shap_values = shap_values[0]
