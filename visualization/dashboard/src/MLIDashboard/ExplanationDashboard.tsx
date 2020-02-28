@@ -32,6 +32,7 @@ import { IWeightedDropdownContext, WeightVectorOption, WeightVectors } from "./I
 import { ModelExplanationUtils } from "./ModelExplanationUtils";
 import { IBarChartConfig } from "./SharedComponents/IBarChartConfig";
 import { EbmExplanation } from "./Controls/EbmExplanation";
+import { TreeViewRenderer } from "./Controls/TreeViewRenderer";
 import { JointDataset } from "./JointDataset";
 
 const s = require("./ExplanationDashboard.css");
@@ -48,6 +49,7 @@ export interface IDashboardState {
     activeLocalTab: number;
     configs: {[key: string]: IPlotlyProperty | IFeatureImportanceConfig | IBarChartConfig};
     selectedRow: number | undefined;
+    debugMLTree: undefined;
 }
 
 export class ExplanationDashboard extends React.Component<IExplanationDashboardProps, IDashboardState> {
@@ -62,7 +64,8 @@ export class ExplanationDashboard extends React.Component<IExplanationDashboardP
         "explanationExploration",
         "summaryImportance",
         "modelExplanation",
-        "customVisualization"
+        "customVisualization",
+        "debugML"
     ];
 
     private static localTabKeys: string[] = [
@@ -101,7 +104,8 @@ export class ExplanationDashboard extends React.Component<IExplanationDashboardP
     public static buildInitialExplanationContext(props: IExplanationDashboardProps): IExplanationContext {
         const explanationGenerators: IExplanationGenerators = {
             requestPredictions: props.requestPredictions,
-            requestLocalFeatureExplanations: props.requestLocalFeatureExplanations
+            requestLocalFeatureExplanations: props.requestLocalFeatureExplanations,
+            requestDebugML: props.requestDebugML
         };
         const modelMetadata = ExplanationDashboard.buildModelMetadata(props);
         const errorMessage = ExplanationDashboard.validateInputs(props, modelMetadata);
@@ -549,6 +553,9 @@ export class ExplanationDashboard extends React.Component<IExplanationDashboardP
         if (explanationContext.customVis !== undefined) {
             this.pivotItems.push({headerText: localization.summaryImportance, itemKey: ExplanationDashboard.globalTabKeys[5]})
         }
+        if (explanationContext.testDataset.dataset !== undefined) {
+            this.pivotItems.push({headerText: localization.debugML, itemKey: ExplanationDashboard.globalTabKeys[6]})
+        }
 
         this.state = {
             dashboardContext: {
@@ -566,7 +573,8 @@ export class ExplanationDashboard extends React.Component<IExplanationDashboardP
                 [GlobalFeatureImportanceId]: {displayMode: FeatureImportanceModes.beehive, topK: defaultTopK, id: GlobalFeatureImportanceId},
                 [LocalBarId]: {topK: defaultTopK}
             },
-            selectedRow: undefined
+            selectedRow: undefined,
+            debugMLTree: undefined
         };
     }
 
@@ -584,6 +592,7 @@ export class ExplanationDashboard extends React.Component<IExplanationDashboardP
             }
         });
         this.fetchExplanations();
+        this.fetchDebugMLTree();
     }
 
     public componentDidUpdate(prevProps: IExplanationDashboardProps): void {
@@ -681,6 +690,14 @@ export class ExplanationDashboard extends React.Component<IExplanationDashboardP
                             {this.state.activeGlobalTab === 5 && (
                                 <iframe srcDoc={this.state.dashboardContext.explanationContext.customVis}/>
                             )}
+                            {this.state.activeGlobalTab === 6 && (
+                                <TreeViewRenderer
+                                    explanationContext={this.state.dashboardContext.explanationContext}
+                                    theme={this.props.theme}
+                                    messages={this.props.stringParams ? this.props.stringParams.contextualHelp : undefined}
+                                    treeNodes={this.state.debugMLTree}
+                                />
+                            )}
                         </div>
                         {this.state.dashboardContext.explanationContext.localExplanation && (<div className="local-charts-wrapper">
                             {this.state.selectedRow === undefined && (
@@ -754,10 +771,17 @@ export class ExplanationDashboard extends React.Component<IExplanationDashboardP
         );
     }
 
+    private fetchDebugMLTree(): void {
+        this.state.dashboardContext.explanationContext.explanationGenerators.requestDebugML(["a", "b", "c"], new AbortController().signal)
+            .then((result) => {
+                this.setState({debugMLTree: result as any});
+            })
+    }
+
     private fetchExplanations(): void {
         const expContext = this.state.dashboardContext.explanationContext;
         const dataset = expContext.testDataset;
-        const modelMetadata =expContext.modelMetadata;
+        const modelMetadata = expContext.modelMetadata;
         if (expContext.explanationGenerators.requestLocalFeatureExplanations === undefined ||
             dataset === undefined || dataset.dataset === undefined ||
             (expContext.localExplanation !== undefined && expContext.localExplanation.values !== undefined)) {

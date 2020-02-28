@@ -10,6 +10,7 @@ import {bostonData} from '../__mock_data/bostonData';
 import {ebmData } from '../__mock_data/ebmData';
 import {irisNoData} from '../__mock_data/irisNoData';
 import {largeFeatureCount} from '../__mock_data/largeFeatureCount';
+import {dummyTreeData} from '../__mock_data/dummyTree';
 import { initializeIcons } from "@uifabric/icons";
 import { createTheme } from "@uifabric/styling";
 
@@ -177,6 +178,18 @@ import { createTheme } from "@uifabric/styling";
         return promise;
       }
 
+      generateJsonTree(data, signal) {
+        let promise = new Promise((resolve, reject) => {
+          let timeout = setTimeout(() => {resolve(dummyTreeData)}, 300);
+          signal.addEventListener('abort', () => {
+            clearTimeout(timeout);
+            reject(new DOMException('Aborted', 'AbortError'));
+          });
+        });
+
+        return promise;
+      }
+
       generateExplanatins(explanations, data, signal) {
         let promise = new Promise((resolve, reject) => {
           let timeout = setTimeout(() => {resolve(explanations)}, 300);
@@ -256,6 +269,7 @@ import { createTheme } from "@uifabric/styling";
                           ebmGlobalExplanation: data.ebmData
                         }}
                         requestPredictions={this.generateRandomProbs.bind(this, classDimension)}
+                        requestDebugML={this.generateJsonTree.bind(this)}
                         stringParams={{contextualHelp: this.messages}}
                         theme={theme}
                         locale={this.state.language}

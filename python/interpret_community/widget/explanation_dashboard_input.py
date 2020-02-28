@@ -9,6 +9,8 @@ from ..common.error_handling import _format_exception
 from scipy.sparse import issparse
 import numpy as np
 import pandas as pd
+from sklearn import tree
+from sklearn.tree import _tree
 
 
 class ExplanationDashboardInput:
@@ -41,6 +43,7 @@ class ExplanationDashboardInput:
             classes=None,
             features=None,
             predict_url=None,
+            tree_url=None,
             locale=None):
         """Initialize the Explanation Dashboard Input.
 
@@ -62,11 +65,14 @@ class ExplanationDashboardInput:
         :type features: numpy.array or list[]
         """
         self._model = model
+        self._dataset = dataset
+        self._true_y = true_y
         self._is_classifier = model is not None and hasattr(model, 'predict_proba') and \
             model.predict_proba is not None
         self._dataframeColumns = None
         self.dashboard_input = {}
         self._predict_url = predict_url
+        self._tree_url = tree_url
         # List of explanations, key of explanation type is "explanation_type"
         self._mli_explanations = explanation.data(-1)["mli"]
         local_explanation = self._find_first_explanation(ExplanationDashboardInterface.MLI_LOCAL_EXPLANATION_KEY)
@@ -188,6 +194,59 @@ class ExplanationDashboardInput:
     def enable_predict_url(self):
         if self._model is not None:
             self.dashboard_input[ExplanationDashboardInterface.PREDICTION_URL] = self._predict_url
+            self.dashboard_input[ExplanationDashboardInterface.TREE_URL] = self._tree_url
+
+    def debug_ml(self):
+        try:
+            # Fit a surrogate model on errors
+            surrogate = tree.DecisionTreeClassifier(max_depth=3)
+            diff = self._model.predict(self._dataset) != self._true_y
+            surrogate.fit(self._dataset, diff)
+            json_tree = self.traverse(surrogate.tree_, 0, [])
+            return {
+                WidgetRequestResponseConstants.DATA: json_tree
+            }
+        except Exception:
+            return {
+                WidgetRequestResponseConstants.ERROR: "Failed to generate json tree representation",
+                WidgetRequestResponseConstants.DATA: []
+            }
+
+    def traverse(self, tree, nodeid, json, parent=None):
+        children_left = tree.children_left[nodeid]
+        children_right = tree.children_right[nodeid]
+
+        # write current node to json
+        json = self.node_to_json(tree, nodeid, json, parent)
+
+        # write children to json
+        if children_left != _tree.TREE_LEAF:
+            json = self.traverse(tree, children_left, json, nodeid)
+            json = self.traverse(tree, children_right, json, nodeid)
+        return json
+
+    def node_to_json(self, tree, nodeid, json, parent=None):
+        values = tree.value[nodeid][0]
+        success = values[0]
+        if len(values.shape) == 1:
+            error = 0
+        else:
+            error = values[1]
+        json.append({
+          "id": nodeid,
+          "parentId": parent,
+          "size": success + error,
+          "success": success,
+          "error": error,
+          "nodeIndex": nodeid,
+          "nodeName": nodeid,
+          "parentNodeName": parent,
+          "pathFromRoot": "",
+          "condition": "condition",
+          "sourceRowKeyHash": "hashkey",
+          "badFeaturesRowCount": 0,
+        })
+        return json
 
     def on_predict(self, data):
         try:

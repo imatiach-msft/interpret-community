@@ -164,6 +164,12 @@ class ExplanationDashboard:
             if id in ExplanationDashboard.explanations:
                 return ExplanationDashboard.explanations[id].on_predict(data)
 
+        @app.route('/<id>/tree', methods=['POST'])
+        def tree(id):
+            # data = request.get_json(force=True)
+            if id in ExplanationDashboard.explanations:
+                return ExplanationDashboard.explanations[id].debug_ml()
+
     def __init__(self, explanation, model=None, *, dataset=None,
                  true_y=None, classes=None, features=None, port=None, use_cdn=True,
                  datasetX=None, trueY=None, locale=None):
@@ -193,8 +199,11 @@ class ExplanationDashboard:
             local_url = "{0}/{1}".format(
                 base_url,
                 str(ExplanationDashboard.model_count))
+            tree_url = "{0}/{1}/tree".format(
+                base_url,
+                str(ExplanationDashboard.model_count))
         explanation_input =\
-            ExplanationDashboardInput(explanation, model, dataset, true_y, classes, features, predict_url, locale)
+            ExplanationDashboardInput(explanation, model, dataset, true_y, classes, features, predict_url, tree_url, locale)
         # Due to auth, predict is only available in separate tab in cloud after login
         if ExplanationDashboard.service.env == "local":
             explanation_input.enable_predict_url()

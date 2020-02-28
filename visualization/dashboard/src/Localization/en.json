@@ -22,6 +22,8 @@
     "_explanationExploration.comment": "Label for tab showing scatter plot of dataset and importance of features data",
     "summaryImportance": "Summary Importance",
     "_summmaryImportance.comment": "Label showing all importance of feature datapoints in scatter plot",
+    "debugML": "Debug ML",
+    "_debugML.comment": "Error Analysis using surrogate decision tree",
     "featureImportance": "Feature Importance",
     "_featureImportance.comment": "Label for feature importance ",
     "featureImportanceOf": "Feature importance of {0}",

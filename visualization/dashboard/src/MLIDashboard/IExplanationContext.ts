@@ -58,6 +58,7 @@ export interface IFeatureValueExplanation {
 export interface IExplanationGenerators {
     requestPredictions?: (request: any[], abortSignal: AbortSignal) => Promise<any[]>;
     requestLocalFeatureExplanations?: (request: any[], abortSignal: AbortSignal, explanationAlgorithm?: string) => Promise<any[]>;
+    requestDebugML?: (request: any[], abortSignal: AbortSignal, explanationAlgorithm?: string) => Promise<any[]>;
 }
 
 export interface ITestDataset {

@@ -39,6 +39,7 @@
     "jmespath": "^0.15.0",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
+    "package.json": "^2.0.1",
     "plotly.js-dist": "^1.45.3",
     "uuid": "^3.3.2"
   }

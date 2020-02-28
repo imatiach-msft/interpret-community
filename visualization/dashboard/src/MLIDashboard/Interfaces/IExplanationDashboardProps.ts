@@ -30,6 +30,7 @@ export interface IExplanationDashboardProps {
     iconUrl?: string;
     requestPredictions?: (request: any[], abortSignal: AbortSignal) => Promise<any[]>;
     requestLocalFeatureExplanations?: (request: any[], abortSignal: AbortSignal, explanationAlgorithm?: string) => Promise<any[]>;
+    requestDebugML?: (request: any[], abortSignal: AbortSignal) => Promise<any[]>;
 }
 
 export interface IModelInformation {
