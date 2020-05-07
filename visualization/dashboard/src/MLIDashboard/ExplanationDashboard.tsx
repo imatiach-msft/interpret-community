@@ -554,7 +554,7 @@ export class ExplanationDashboard extends React.Component<IExplanationDashboardP
             this.pivotItems.push({headerText: localization.summaryImportance, itemKey: ExplanationDashboard.globalTabKeys[5]})
         }
         if (explanationContext.testDataset.dataset !== undefined) {
-            this.pivotItems.push({headerText: localization.debugML, itemKey: ExplanationDashboard.globalTabKeys[6]})
+            this.pivotItems.push({headerText: 'debugML', itemKey: ExplanationDashboard.globalTabKeys[6]})
         }
 
         this.state = {
