@@ -67,13 +67,13 @@ export interface TreeNode {
     fillstyle_down: any
 }
 
+const SvgOuterFrame: React.RefObject<SVGSVGElement> = React.createRef();
+
 export class TreeViewRenderer extends React.PureComponent<ITreeViewRendererProps, ITreeViewRendererState> {
-    private SvgOuterFrameRef: React.RefObject<SVGSVGElement>;
+    // private SvgOuterFrameRef: React.RefObject<SVGSVGElement>;
     private treeNodes: Array<any>;
     constructor(props:ITreeViewRendererProps) {
         super(props);
-        this.SvgOuterFrameRef = React.createRef();
-        this.temp = select(this.SvgOuterFrameRef.current).append('g')
         this.treeNodes = props.treeNodes
         this.onResize()
     }
@@ -156,7 +156,7 @@ export class TreeViewRenderer extends React.PureComponent<ITreeViewRendererProps
             const bb = this.getTextBB(d.data.nodeName)
             return {
               id: `linkLabel${d.id}`,
-              text: d.data.nodeName,
+              text: `${d.data.nodeName}`,
               style: {
                 transform: `translate(${labelX}px, ${labelY}px)`,
               },
@@ -186,10 +186,11 @@ export class TreeViewRenderer extends React.PureComponent<ITreeViewRendererProps
             heatmapStyle = {"fill": this.colorgrad(localErrorPerc)}
           }
   
-          let selectedStyle = heatmapStyle
+          let selectedStyle: any = heatmapStyle
   
           if (d.data.isSelected) {
-            selectedStyle = [{'strokeWidth': 3}, heatmapStyle]
+            let strokeWidth = {'strokeWidth': 3}
+            selectedStyle = {strokeWidth, heatmapStyle}
           }
   
           return {
@@ -252,7 +253,7 @@ export class TreeViewRenderer extends React.PureComponent<ITreeViewRendererProps
 
         return (
           <div className="mainFrame"> {/* v-size-changed={this.onResize} */}
-            <svg ref={this.SvgOuterFrameRef} className="SvgOuterFrame" onClick={this.bkgClick.bind(this)}>
+            <svg ref={SvgOuterFrame} className="SvgOuterFrame" onClick={this.bkgClick.bind(this)}>
               <mask id="Mask">
                 <rect x="-26" y="-26" width="52" height="52" fill="white" />
               </mask>
@@ -332,13 +333,13 @@ export class TreeViewRenderer extends React.PureComponent<ITreeViewRendererProps
                     <CSSTransition key={linkLabel.id} in={true} timeout={200} className="linkLabels">
                         <g key={linkLabel.id} style={linkLabel.style}>
                             <rect
-                                x={"(-" + linkLabel.bbX + ")"}
-                                y={"(-" + linkLabel.bbY + ")"}
+                                x={-linkLabel.bbX}
+                                y={-linkLabel.bbY}
                                 width={linkLabel.bbWidth}
                                 height={linkLabel.bbHeight}
                                 fill="white"
                                 stroke="#089acc"
-                                stroke-width="1px"
+                                strokeWidth="1px"
                                 rx="10"
                                 ry="10"
                             />
@@ -367,11 +368,12 @@ export class TreeViewRenderer extends React.PureComponent<ITreeViewRendererProps
         this.root = treemap(temp_root)
     }
     public getTextBB(labelText) {
-        this.temp.selectAll('*').remove()
-        this.temp.append('text').attr('class', 'linkLabel').text(`${labelText}`)
+        var temp = select(SvgOuterFrame.current).append('g')
+        temp.selectAll('*').remove()
+        temp.append('text').attr('className', 'linkLabel').text(`${labelText}`)
   
-        const bb = this.temp.node().getBBox()
-        this.temp.selectAll('*').remove()
+        const bb = temp.node().getBBox()
+        temp.selectAll('*').remove()
         return bb
     }
     public skippedInstances(node) {
@@ -388,7 +390,7 @@ export class TreeViewRenderer extends React.PureComponent<ITreeViewRendererProps
     }
     public bkgClick(): void {
         this.clearSelection()
-        this.render()
+        this.forceUpdate()
     }
     public selectParentNodes(d): void {
         if (!d) return
@@ -424,7 +426,7 @@ export class TreeViewRenderer extends React.PureComponent<ITreeViewRendererProps
         this.nodeDetail.mask_up = { transform: `translate(0px, ${node.maskShift}px)` }
   
         // this.$emit('node-clicked', node.data)
-        this.render()
+        this.forceUpdate()
     }
     public componentDidMount() {
         window.addEventListener('resize', this.onResize.bind(this));
