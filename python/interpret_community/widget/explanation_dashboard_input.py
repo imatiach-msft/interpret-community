@@ -65,7 +65,7 @@ class ExplanationDashboardInput:
         :type origin: str
         """
         self._model = model
-        self._origin = None
+        self._origin = origin
         self._is_classifier = model is not None and hasattr(model, 'predict_proba') and \
             model.predict_proba is not None
         self._dataframeColumns = None
