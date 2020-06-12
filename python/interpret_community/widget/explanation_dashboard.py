@@ -10,6 +10,7 @@ import re
 import os
 import json
 import atexit
+import logging
 from .explanation_dashboard_input import ExplanationDashboardInput
 from ._internal.constants import DatabricksInterfaceConstants
 
