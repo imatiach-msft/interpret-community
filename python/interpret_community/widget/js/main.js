@@ -11,10 +11,10 @@ const RenderDashboard = (divId, data) => {
             'Content-Type': 'application/json',
             'Access-Control-Request-Method': 'POST',
             'Access-Control-Request-Headers': 'Content-Type',
-            'Access-Control-Allow-Origin': data.origin,
+            'Access-Control-Allow-Origin': '*',
             'Vary': 'Origin',
             'Access-Control-Allow-Methods': 'GET, POST, PUT',
-            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
             'Access-Control-Allow-Credentials': 'true',
             'Accept': 'application/json'
           }
