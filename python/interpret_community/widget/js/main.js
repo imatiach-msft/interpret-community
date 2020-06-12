@@ -5,9 +5,25 @@ import { ExplanationDashboard } from 'interpret-dashboard';
 
 const RenderDashboard = (divId, data) => {
   let generatePrediction = (postData) => {
-    return fetch(data.predictionUrl, {method: "post", body: JSON.stringify(postData), headers: {
-      'Content-Type': 'application/json'
-    }}).then(resp => {
+    var headers_data = {}
+    if (data.origin !== undefined) {
+        headers_data = {
+            'Content-Type': 'application/json',
+            'Access-Control-Request-Method': 'POST',
+            'Access-Control-Request-Headers': 'Content-Type',
+            'Access-Control-Allow-Origin': data.origin,
+            'Vary': 'Origin',
+            'Access-Control-Allow-Methods': 'GET, POST, PUT',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Credentials': 'true',
+            'Accept': 'application/json'
+          }
+    } else {
+        headers_data = {
+            'Content-Type': 'application/json'
+        }
+    }
+    return fetch(data.predictionUrl, {method: "post", body: JSON.stringify(postData), headers: headers_data}).then(resp => {
       if (resp.status >= 200 && resp.status < 300) {
         return resp.json()
       }

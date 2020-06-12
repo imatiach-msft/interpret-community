@@ -62,6 +62,7 @@ class ExplanationDashboard:
             self.port = port
             self.ip = 'localhost'
             self.env = "local"
+            self.origin = None
             self.use_cdn = True
             if self.port is None:
                 # Try 100 different ports
@@ -122,6 +123,7 @@ class ExplanationDashboard:
             self.env = "azure"
             instance_name = result["instance"]
             domain_suffix = result["domainsuffix"]
+            self.origin = "https://{}.{}".format(instance_name, domain_suffix)
             return "https://{}-{}.{}".format(instance_name, self.port, domain_suffix)
 
         @staticmethod
@@ -193,15 +195,13 @@ class ExplanationDashboard:
             local_url = "{0}/{1}".format(
                 base_url,
                 str(ExplanationDashboard.model_count))
-        explanation_input =\
-            ExplanationDashboardInput(explanation, model, dataset, true_y, classes, features, predict_url, locale)
+        origin = ExplanationDashboard.service.origin
+        explanation_input = ExplanationDashboardInput(explanation, model, dataset, true_y, classes,
+                                                      features, predict_url, locale, origin)
         # Due to auth, predict is only available in separate tab in cloud after login
-        if ExplanationDashboard.service.env == "local":
+        if ExplanationDashboard.service.env != "cloud":
             explanation_input.enable_predict_url()
         html = generate_inline_html(explanation_input, local_url)
-        if ExplanationDashboard.service.env == "azure":
-            explanation_input.enable_predict_url()
-
         ExplanationDashboard.explanations[str(ExplanationDashboard.model_count)] = explanation_input
 
         if "DATABRICKS_RUNTIME_VERSION" in os.environ:

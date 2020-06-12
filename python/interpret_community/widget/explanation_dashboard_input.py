@@ -41,7 +41,8 @@ class ExplanationDashboardInput:
             classes=None,
             features=None,
             predict_url=None,
-            locale=None):
+            locale=None,
+            origin=None):
         """Initialize the Explanation Dashboard Input.
 
         :param explanation: An object that represents an explanation.
@@ -60,8 +61,11 @@ class ExplanationDashboardInput:
         :type classes: numpy.array or list[]
         :param features: Feature names.
         :type features: numpy.array or list[]
+        :param origin: The origin for the request response.
+        :type origin: str
         """
         self._model = model
+        self._origin = None
         self._is_classifier = model is not None and hasattr(model, 'predict_proba') and \
             model.predict_proba is not None
         self._dataframeColumns = None
@@ -188,6 +192,8 @@ class ExplanationDashboardInput:
     def enable_predict_url(self):
         if self._model is not None:
             self.dashboard_input[ExplanationDashboardInterface.PREDICTION_URL] = self._predict_url
+            if self._origin is not None:
+                self.dashboard_input[ExplanationDashboardInterface.ORIGIN] = self._origin
 
     def on_predict(self, data):
         try:

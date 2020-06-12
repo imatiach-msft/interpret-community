@@ -19,6 +19,7 @@ class ExplanationDashboardInterface(object):
     CUSTOM_VISUALS = "customVis"
     EBM_EXPLANATION = "ebmGlobalExplanation"
     PREDICTION_URL = "predictionUrl"
+    ORIGIN = "origin"
     MLI_LOCAL_EXPLANATION_KEY = "local_feature_importance"
     MLI_GLOBAL_EXPLANATION_KEY = "global_feature_importance"
     MLI_EBM_GLOBAL_EXPLANATION_KEY = "ebm_global"
