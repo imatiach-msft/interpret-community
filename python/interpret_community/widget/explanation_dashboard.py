@@ -1,5 +1,5 @@
-from flask import Flask, request
-from flask_cors import CORS
+from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 from jinja2 import Environment, PackageLoader
 from IPython.display import display, HTML
 from interpret.utils.environment import EnvironmentDetector, is_cloud_env
@@ -163,10 +163,11 @@ class ExplanationDashboard:
                 return "Unknown model id."
 
         @app.route('/<id>/predict', methods=['POST'])
+        @cross_origin()
         def predict(id):
             data = request.get_json(force=True)
             if id in ExplanationDashboard.explanations:
-                return ExplanationDashboard.explanations[id].on_predict(data)
+                return jsonify(ExplanationDashboard.explanations[id].on_predict(data))
 
     def __init__(self, explanation, model=None, *, dataset=None,
                  true_y=None, classes=None, features=None, port=None, use_cdn=True,
