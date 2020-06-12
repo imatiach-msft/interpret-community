@@ -11,7 +11,7 @@ const RenderDashboard = (divId, data) => {
         'Content-Type': 'application/json'
     }
     // return fetch(data.predictionUrl, {method: "get", body: JSON.stringify(postData), headers: headers_data, mode: 'cors'}).then(resp => {
-    return fetch(data.predictionUrl, {method: "get", headers: headers_data, credentials: 'include', mode: 'cors'}).then(resp => {
+    return fetch(data.predictionUrl, {method: "get", headers: headers_data, credentials: 'same-origin', mode: 'cors'}).then(resp => {
       if (resp.status >= 200 && resp.status < 300) {
         return resp.json()
       }
