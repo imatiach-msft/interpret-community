@@ -6,7 +6,8 @@ import { ExplanationDashboard } from 'interpret-dashboard';
 const RenderDashboard = (divId, data) => {
   let generatePrediction = (postData) => {
     var headers_data = {}
-    if (data.origin !== undefined) {
+    //data.origin !== undefined
+    if (False) {
         headers_data = {
             'Content-Type': 'application/json',
             'Access-Control-Request-Method': 'POST',
