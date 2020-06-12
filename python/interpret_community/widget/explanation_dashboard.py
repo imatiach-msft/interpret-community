@@ -1,5 +1,5 @@
 from flask import Flask, request
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 from jinja2 import Environment, PackageLoader
 from IPython.display import display, HTML
 from interpret.utils.environment import EnvironmentDetector, is_cloud_env
@@ -56,7 +56,7 @@ class ExplanationDashboard:
 
     class DashboardService:
         app = Flask(__name__)
-        CORS(app, send_wildcard=True)
+        CORS(app, send_wildcard=True, supports_credentials=True, origins='*')
 
         def __init__(self, port):
             self.port = port
