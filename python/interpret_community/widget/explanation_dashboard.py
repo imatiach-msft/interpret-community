@@ -58,6 +58,7 @@ class ExplanationDashboard:
     class DashboardService:
         app = Flask(__name__)
         cors = CORS(app, resources={r'/*': {'origins': '*'}}, supports_credentials=True)
+        app.config['CORS_HEADERS'] = 'Content-Type'
         logging.getLogger('flask_cors').level = logging.DEBUG
 
         def __init__(self, port):
@@ -165,9 +166,16 @@ class ExplanationDashboard:
         @app.route('/<id>/predict', methods=['POST'])
         @cross_origin(origin="*")
         def predict(id):
+            print("Returning Predicton!!!!")
             data = request.get_json(force=True)
             if id in ExplanationDashboard.explanations:
                 return jsonify(ExplanationDashboard.explanations[id].on_predict(data))
+
+        @app.after_request
+        def after_request(response):
+            header = response.headers
+            header['Access-Control-Allow-Origin'] = '*'
+            return response
 
     def __init__(self, explanation, model=None, *, dataset=None,
                  true_y=None, classes=None, features=None, port=None, use_cdn=True,
