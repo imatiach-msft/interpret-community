@@ -1,5 +1,5 @@
 from flask import Flask, request
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from jinja2 import Environment, PackageLoader
 from IPython.display import display, HTML
 from interpret.utils.environment import EnvironmentDetector, is_cloud_env
@@ -161,6 +161,7 @@ class ExplanationDashboard:
                 return "Unknown model id."
 
         @app.route('/<id>/predict', methods=['POST'])
+        @cross_origin
         def predict(id):
             data = request.get_json(force=True)
             if id in ExplanationDashboard.explanations:
