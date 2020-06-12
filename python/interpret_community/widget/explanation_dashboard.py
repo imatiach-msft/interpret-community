@@ -56,7 +56,8 @@ class ExplanationDashboard:
 
     class DashboardService:
         app = Flask(__name__)
-        CORS(app)
+        cors = CORS(app, resources={"/*": {"origins": "*"}})
+        logging.getLogger('flask_cors').level = logging.DEBUG
 
         def __init__(self, port):
             self.port = port
@@ -165,15 +166,6 @@ class ExplanationDashboard:
             data = request.get_json(force=True)
             if id in ExplanationDashboard.explanations:
                 return ExplanationDashboard.explanations[id].on_predict(data)
-
-        @app.after_request
-        def add_headers(response):
-            response.headers.add('Content-Type', 'application/json')
-            response.headers.add('Access-Control-Allow-Origin', '*')
-            response.headers.add('Access-Control-Allow-Methods', 'PUT, GET, POST, DELETE, OPTIONS')
-            response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-            response.headers.add('Access-Control-Expose-Headers', 'Content-Type,Content-Length,Authorization,X-Pagination')
-            return response
 
     def __init__(self, explanation, model=None, *, dataset=None,
                  true_y=None, classes=None, features=None, port=None, use_cdn=True,
