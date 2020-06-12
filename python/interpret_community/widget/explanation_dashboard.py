@@ -163,7 +163,7 @@ class ExplanationDashboard:
                 return "Unknown model id."
 
         @app.route('/<id>/predict', methods=['POST'])
-        @cross_origin()
+        @cross_origin(origin="*")
         def predict(id):
             data = request.get_json(force=True)
             if id in ExplanationDashboard.explanations:
