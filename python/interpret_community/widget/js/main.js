@@ -7,7 +7,7 @@ const RenderDashboard = (divId, data) => {
   let generatePrediction = (postData) => {
     var headers_data = {}
     //data.origin !== undefined
-    if (False) {
+    if (false) {
         headers_data = {
             'Content-Type': 'application/json',
             'Access-Control-Request-Method': 'POST',
