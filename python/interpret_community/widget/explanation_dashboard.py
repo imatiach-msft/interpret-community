@@ -56,6 +56,7 @@ class ExplanationDashboard:
     default_template = env.get_template("inlineDashboard.html")
 
     class DashboardService:
+        print("Starting flask app!!!!")
         app = Flask(__name__)
         cors = CORS(app, resources={r'/*': {'origins': '*'}}, supports_credentials=True)
         app.config['CORS_HEADERS'] = 'Content-Type'
@@ -173,6 +174,7 @@ class ExplanationDashboard:
 
         @app.after_request
         def after_request(response):
+            print("In after request!!!!")
             header = response.headers
             header['Access-Control-Allow-Origin'] = '*'
             return response
