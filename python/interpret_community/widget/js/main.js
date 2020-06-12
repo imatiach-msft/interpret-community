@@ -7,22 +7,8 @@ const RenderDashboard = (divId, data) => {
   let generatePrediction = (postData) => {
     var headers_data = {}
     //data.origin !== undefined
-    if (false) {
-        headers_data = {
-            'Content-Type': 'application/json',
-            'Access-Control-Request-Method': 'POST',
-            'Access-Control-Request-Headers': 'Content-Type',
-            'Access-Control-Allow-Origin': '*',
-            'Vary': 'Origin',
-            'Access-Control-Allow-Methods': 'GET, POST, PUT',
-            'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
-            'Access-Control-Allow-Credentials': 'true',
-            'Accept': 'application/json'
-          }
-    } else {
-        headers_data = {
-            'Content-Type': 'application/json'
-        }
+    headers_data = {
+        'Content-Type': 'application/json'
     }
     return fetch(data.predictionUrl, {method: "post", body: JSON.stringify(postData), headers: headers_data, credentials: "include"}).then(resp => {
       if (resp.status >= 200 && resp.status < 300) {
