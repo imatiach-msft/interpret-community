@@ -57,7 +57,7 @@ class ExplanationDashboard:
 
     class DashboardService:
         app = Flask(__name__)
-        cors = CORS(app, resources={"/*": {"origins": "*"}})
+        cors = CORS(app, resources={r'/*': {'origins': '*'}}, supports_credentials=True)
         logging.getLogger('flask_cors').level = logging.DEBUG
 
         def __init__(self, port):
