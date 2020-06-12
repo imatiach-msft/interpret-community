@@ -56,7 +56,7 @@ class ExplanationDashboard:
 
     class DashboardService:
         app = Flask(__name__)
-        CORS(app, send_wildcard=True, supports_credentials=True)
+        CORS(app, supports_credentials=True)
 
         def __init__(self, port):
             self.port = port
