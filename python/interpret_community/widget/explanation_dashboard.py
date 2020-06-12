@@ -58,7 +58,7 @@ class ExplanationDashboard:
     class DashboardService:
         print("Starting flask app!!!!")
         app = Flask(__name__)
-        # cors = CORS(app, resources={r'/*': {'origins': '*'}}, supports_credentials=True)
+        cors = CORS(app, resources={r'/*': {'origins': '*'}})
         app.config['CORS_HEADERS'] = 'Content-Type'
         logging.getLogger('flask_cors').level = logging.DEBUG
 
@@ -164,8 +164,8 @@ class ExplanationDashboard:
             else:
                 return "Unknown model id."
 
+        @cross_origin(origin="*")
         @app.route('/<id>/predict', methods=['POST', 'OPTIONS'])
-        #@cross_origin(origin="*")
         def predict(id):
             print("Returning Predicton!!!!")
             data = request.get_json(force=True)
