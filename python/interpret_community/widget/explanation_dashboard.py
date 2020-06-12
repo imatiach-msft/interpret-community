@@ -56,7 +56,7 @@ class ExplanationDashboard:
 
     class DashboardService:
         app = Flask(__name__)
-        CORS(app)
+        CORS(app, send_wildcard=True)
 
         def __init__(self, port):
             self.port = port
@@ -161,7 +161,6 @@ class ExplanationDashboard:
                 return "Unknown model id."
 
         @app.route('/<id>/predict', methods=['POST'])
-        @cross_origin
         def predict(id):
             data = request.get_json(force=True)
             if id in ExplanationDashboard.explanations:
