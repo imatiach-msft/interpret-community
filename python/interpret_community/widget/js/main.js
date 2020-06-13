@@ -10,6 +10,7 @@ const RenderDashboard = (divId, data) => {
     headers_data = {
         'Content-Type': 'application/json'
     }
+    fetch('https://nbvm-5000.eastus2.instances.azureml.net/', {method: "get", headers: headers_data, credentials: 'same-origin', mode: 'cors'}).then(resp => {
     // return fetch(data.predictionUrl, {method: "get", body: JSON.stringify(postData), headers: headers_data, mode: 'cors'}).then(resp => {
     return fetch(data.predictionUrl, {method: "get", headers: headers_data, credentials: 'same-origin', mode: 'cors'}).then(resp => {
       if (resp.status >= 200 && resp.status < 300) {
@@ -22,6 +23,7 @@ const RenderDashboard = (divId, data) => {
       }
       return Promise.resolve(json.data)
     })
+  })
   }
 
   ReactDOM.render(<ExplanationDashboard
