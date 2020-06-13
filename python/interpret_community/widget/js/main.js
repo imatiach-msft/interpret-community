@@ -3,13 +3,18 @@ import ReactDOM from 'react-dom';
 
 import { ExplanationDashboard } from 'interpret-dashboard';
 
+function getCookieValue(a) {
+    var b = document.cookie.match('(^|;)\\s*' + a + '\\s*=\\s*([^;]+)');
+    return b ? b.pop() : '';
+}
+
 const RenderDashboard = (divId, data) => {
   let generatePrediction = (postData) => {
     var headers_data = {}
     //data.origin !== undefined
     headers_data1 = {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-        'Cookie': document.cookie
+        'Cookie': getCookieValue('_xsrf')
     }
     headers_data2 = {
         'Content-Type': 'application/json',
