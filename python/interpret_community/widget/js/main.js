@@ -9,7 +9,7 @@ const RenderDashboard = (divId, data) => {
     //data.origin !== undefined
     headers_data1 = {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-        'X-XSRF-TOKEN': getCookieValue('XSRF-TOKEN')
+        'Cookie': document.cookie
     }
     headers_data2 = {
         'Content-Type': 'application/json',
