@@ -7,13 +7,18 @@ const RenderDashboard = (divId, data) => {
   let generatePrediction = (postData) => {
     var headers_data = {}
     //data.origin !== undefined
-    headers_data = {
-        'Content-Type': 'application/json',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+    headers_data1 = {
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+        'X-XSRF-TOKEN': getCookieValue('XSRF-TOKEN')
     }
-    fetch('https://nbvm-5000.eastus2.instances.azureml.net/', {method: "get", headers: headers_data, credentials: 'include', mode: 'cors'}).then(resp => {
+    headers_data2 = {
+        'Content-Type': 'application/json',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+        'X-XSRF-TOKEN': getCookieValue('XSRF-TOKEN')
+    }
+    fetch('https://nbvm-5000.eastus2.instances.azureml.net/', {method: "get", headers: headers_data1, credentials: 'same-origin', mode: 'cors'}).then(resp => {
     // return fetch(data.predictionUrl, {method: "get", body: JSON.stringify(postData), headers: headers_data, mode: 'cors'}).then(resp => {
-    return fetch(data.predictionUrl, {method: "get", headers: headers_data, credentials: 'include', mode: 'cors'}).then(resp => {
+    return fetch(data.predictionUrl, {method: "get", headers: headers_data2, credentials: 'same-origin', mode: 'cors'}).then(resp => {
       if (resp.status >= 200 && resp.status < 300) {
         return resp.json()
       }
