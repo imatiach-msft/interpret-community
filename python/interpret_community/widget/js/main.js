@@ -9,7 +9,7 @@ const RenderDashboard = (divId, data) => {
     //data.origin !== undefined
     headers_data = {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
     }
     fetch('https://nbvm-5000.eastus2.instances.azureml.net/', {method: "get", headers: headers_data, credentials: 'include', mode: 'cors'}).then(resp => {
     // return fetch(data.predictionUrl, {method: "get", body: JSON.stringify(postData), headers: headers_data, mode: 'cors'}).then(resp => {
