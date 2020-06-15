@@ -81,7 +81,10 @@ class ExplanationDashboard:
             cors = CORS(app)
         else:
             # Support credentials for notebook VM scenario
-            cors = CORS(app, supports_credentials=True)
+            instance_name = nbvm["instance"]
+            domain_suffix = nbvm["domainsuffix"]
+            nbvm_origin = "https://{}.{}".format(instance_name, domain_suffix)
+            cors = CORS(app, resources={r'/*': {'origins': [nbvm_origin]}}, supports_credentials=True)
             # cors = CORS(app, resources={r'/*': {'origins': '*'}})
         app.config['CORS_HEADERS'] = 'Content-Type'
         logging.getLogger('flask_cors').level = logging.DEBUG
