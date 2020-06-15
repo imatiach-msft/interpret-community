@@ -199,6 +199,7 @@ class ExplanationDashboard:
             instance_name = nbvm["instance"]
             domain_suffix = nbvm["domainsuffix"]
             header['Access-Control-Allow-Origin'] = "https://{}.{}".format(instance_name, domain_suffix)
+            header['Access-Control-Allow-Credentials'] = 'true'
             return response
 
     def __init__(self, explanation, model=None, *, dataset=None,
