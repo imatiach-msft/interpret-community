@@ -39,6 +39,11 @@ def _get_nbvm():
         return None
     return result
 
+nbvm_global = _get_nbvm()
+instance_name_global = nbvm_global["instance"]
+domain_suffix_global = nbvm_global["domainsuffix"]
+nbvm_origin_global = "https://{}.{}".format(instance_name_global, domain_suffix_global)
+
 class ExplanationDashboard:
     """Explanation Dashboard Class.
 
@@ -72,10 +77,6 @@ class ExplanationDashboard:
     _dashboard_js = None
     env = Environment(loader=PackageLoader(__name__, 'templates'))
     default_template = env.get_template("inlineDashboard.html")
-    nbvm_global = _get_nbvm()
-    instance_name_global = nbvm_global["instance"]
-    domain_suffix_global = nbvm_global["domainsuffix"]
-    nbvm_origin_global = "https://{}.{}".format(instance_name_global, domain_suffix_global)
 
     class DashboardService:
         print("Starting flask app!!!!")
