@@ -11,13 +11,16 @@ const RenderDashboard = (divId, data) => {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
         'Content-Type': 'application/json',
     }
-    const instance = axios.create({headers: headers_data, withCredentials: true, baseURL: data.predictionUrl})
-    instance.post('', JSON.stringify(postData))
-    .then((response) => {
-        return response.data
-    })
-    .catch(function (error) {
-        throw new Error(error)
+    const instance = axios.create({headers: headers_data, withCredentials: true, baseURL: 'https://nbvm-5000.eastus2.instances.azureml.net'})
+    instance.get()
+    .then((response_get) => {
+        instance.post('/1/predict', JSON.stringify(postData))
+        .then((response) => {
+            return response.data
+        })
+        .catch(function (error) {
+            throw new Error(error)
+        })
     })
   }
 
