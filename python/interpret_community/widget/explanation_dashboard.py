@@ -24,7 +24,7 @@ except ModuleNotFoundError:
 NBVM_FILE_PATH = "/mnt/azmnt/.nbvm"
 
 def _get_nbvm():
-    if os.path.exists(NBVM_FILE_PATH) and os.path.isfile(NBVM_FILE_PATH):
+    if not (os.path.exists(NBVM_FILE_PATH) and os.path.isfile(NBVM_FILE_PATH)):
         return None
     # regex to find items of the form key=value where value will be part of a url
     # the keys of interest to us are "instance" and domainsuffix"
