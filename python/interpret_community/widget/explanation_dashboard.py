@@ -192,8 +192,11 @@ class ExplanationDashboard:
         @app.after_request
         def after_request(response):
             print("In after request!!!!")
-            # header = response.headers
-            # header['Access-Control-Allow-Origin'] = '*'
+            header = response.headers
+            nbvm = _get_nbvm()
+            instance_name = nbvm["instance"]
+            domain_suffix = nbvm["domainsuffix"]
+            header['Access-Control-Allow-Origin'] = "https://{}-{}.{}".format(instance_name, self.port, domain_suffix)
             return response
 
     def __init__(self, explanation, model=None, *, dataset=None,
