@@ -12,7 +12,7 @@ const RenderDashboard = (divId, data) => {
         'Content-Type': 'application/json',
     }
     const instance = axios.create({headers: headers_data, withCredentials: true, baseURL: data.predictionUrl})
-    instance.post(JSON.stringify(postData))
+    instance.post('', JSON.stringify(postData))
     .then((response) => {
         return response.data
     })
