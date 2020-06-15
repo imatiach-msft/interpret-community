@@ -78,8 +78,10 @@ class ExplanationDashboard:
         nbvm = _get_nbvm()
         app = Flask(__name__)
         if nbvm is None:
+            print("NBVM is NONE!!!")
             cors = CORS(app)
         else:
+            print("Setting up credentials for NBVM NOT NONE!!!")
             # Support credentials for notebook VM scenario
             instance_name = nbvm["instance"]
             domain_suffix = nbvm["domainsuffix"]
