@@ -58,7 +58,8 @@ class ExplanationDashboard:
     class DashboardService:
         print("Starting flask app!!!!")
         app = Flask(__name__)
-        cors = CORS(app, resources={r'/*': {'origins': '*'}})
+        # cors = CORS(app, resources={r'/*': {'origins': '*'}})
+        cors = CORS(app)
         app.config['CORS_HEADERS'] = 'Content-Type'
         logging.getLogger('flask_cors').level = logging.DEBUG
 
@@ -164,21 +165,20 @@ class ExplanationDashboard:
             else:
                 return "Unknown model id."
 
-        @cross_origin(origin="*")
         @app.route('/<id>/predict', methods=['GET', 'POST', 'OPTIONS'])
         def predict(id):
             print("Returning Predicton!!!!")
             data = request.get_json(force=True)
             if id in ExplanationDashboard.explanations:
                 response = jsonify(ExplanationDashboard.explanations[id].on_predict(data))
-                response.headers.add("Access-Control-Allow-Origin", "*")
+                # response.headers.add("Access-Control-Allow-Origin", "*")
                 return response
 
         @app.after_request
         def after_request(response):
             print("In after request!!!!")
-            header = response.headers
-            header['Access-Control-Allow-Origin'] = '*'
+            # header = response.headers
+            # header['Access-Control-Allow-Origin'] = '*'
             return response
 
     def __init__(self, explanation, model=None, *, dataset=None,
