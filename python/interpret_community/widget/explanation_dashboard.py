@@ -21,6 +21,24 @@ except ModuleNotFoundError:
                        "'pip install gevent' or 'pip install interpret-community[visualization]'")
 
 
+NBVM_FILE_PATH = "/mnt/azmnt/.nbvm"
+
+def _get_nbvm():
+    if os.path.exists(NBVM_FILE_PATH) and os.path.isfile(NBVM_FILE_PATH):
+        return None
+    # regex to find items of the form key=value where value will be part of a url
+    # the keys of interest to us are "instance" and domainsuffix"
+    envre = re.compile(r'''^([^\s=]+)=(?:[\s"']*)(.+?)(?:[\s"']*)$''')
+    result = {}
+    with open(NBVM_FILE_PATH) as nbvm_variables:
+        for line in nbvm_variables:
+            match = envre.match(line)
+            if match is not None:
+                result[match.group(1)] = match.group(2)
+    if "instance" not in result or "domainsuffix" not in result:
+        return None
+    return result
+
 class ExplanationDashboard:
     """Explanation Dashboard Class.
 
@@ -57,9 +75,14 @@ class ExplanationDashboard:
 
     class DashboardService:
         print("Starting flask app!!!!")
+        nbvm = _get_nbvm()
         app = Flask(__name__)
-        # cors = CORS(app, resources={r'/*': {'origins': '*'}})
-        cors = CORS(app)
+        if nbvm is None:
+            cors = CORS(app)
+        else:
+            # Support credentials for notebook VM scenario
+            cors = CORS(app, supports_credentials=True)
+            # cors = CORS(app, resources={r'/*': {'origins': '*'}})
         app.config['CORS_HEADERS'] = 'Content-Type'
         logging.getLogger('flask_cors').level = logging.DEBUG
 
@@ -102,9 +125,9 @@ class ExplanationDashboard:
             env = EnvironmentDetector()
             detected_envs = env.detect()
             in_cloud_env = is_cloud_env(detected_envs)
+            result = _get_nbvm()
             # First handle known cloud environments
-            nbvm_file_path = "/mnt/azmnt/.nbvm"
-            if not (os.path.exists(nbvm_file_path) and os.path.isfile(nbvm_file_path)):
+            if result is None:
                 if not in_cloud_env:
                     return "http://{0}:{1}".format(
                         self.ip,
@@ -112,19 +135,7 @@ class ExplanationDashboard:
                 # all non-specified cloud environments are not handled
                 self.env = "cloud"
                 return None
-            self.env = "cloud"
-            # regex to find items of the form key=value where value will be part of a url
-            # the keys of interest to us are "instance" and domainsuffix"
-            envre = re.compile(r'''^([^\s=]+)=(?:[\s"']*)(.+?)(?:[\s"']*)$''')
-            result = {}
-            with open(nbvm_file_path) as nbvm_variables:
-                for line in nbvm_variables:
-                    match = envre.match(line)
-                    if match is not None:
-                        result[match.group(1)] = match.group(2)
 
-            if "instance" not in result or "domainsuffix" not in result:
-                return None
             self.env = "azure"
             instance_name = result["instance"]
             domain_suffix = result["domainsuffix"]
