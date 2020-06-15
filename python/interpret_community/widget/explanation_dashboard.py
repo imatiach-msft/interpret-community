@@ -83,7 +83,7 @@ class ExplanationDashboard:
             # Support credentials for notebook VM scenario
             instance_name = nbvm["instance"]
             domain_suffix = nbvm["domainsuffix"]
-            nbvm_origin = "https://{}.{}".format(instance_name, domain_suffix)
+            nbvm_origin = "https://{}*.{}".format(instance_name, domain_suffix)
             cors = CORS(app, resources={r'/*': {'origins': [nbvm_origin]}}, supports_credentials=True)
             # cors = CORS(app, resources={r'/*': {'origins': '*'}})
         app.config['CORS_HEADERS'] = 'Content-Type'
