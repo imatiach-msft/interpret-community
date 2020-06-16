@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
-import flask_restful
+from flask_restplus import Resource, Api
 from jinja2 import Environment, PackageLoader
 from IPython.display import display, HTML
 from interpret.utils.environment import EnvironmentDetector, is_cloud_env
@@ -47,11 +47,6 @@ nbvm_origin_global = "https://{}.{}".format(instance_name_global, domain_suffix_
 nbvm_origin2_global = "https://{}-5000.{}".format(instance_name_global, domain_suffix_global)
 
 
-class OptionsOverride(flask_restful.Resource):
-    def options(self):
-        print("overriding options!")
-        return {'Allow' : 'POST' }, 200, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods' : 'POST,GET' }
-
 class ExplanationDashboard:
     """Explanation Dashboard Class.
 
@@ -87,10 +82,26 @@ class ExplanationDashboard:
     default_template = env.get_template("inlineDashboard.html")
 
     class DashboardService:
+
+        @app.route('/<id>/predict', methods=['POST', 'OPTIONS'])
+        class OptionsOverride(Resource):
+            def options(self):
+                print("overriding options!")
+                return {'Allow' : 'POST' }, 200, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods' : 'POST,GET' }
+
+            @cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, automatic_options=False, send_wildcard=True)
+            def post(self, id):
+                print("Returning Predicton!!!!")
+                data = request.get_json(force=True)
+                if id in ExplanationDashboard.explanations:
+                    response = jsonify(ExplanationDashboard.explanations[id].on_predict(data))
+                    # response.headers.add("Access-Control-Allow-Origin", "*")
+                    return response
+
         print("Starting flask app!!!!")
         nbvm = _get_nbvm()
         app = Flask(__name__)
-        api = flask_restful.Api(app)
+        api = Api(app)
         api.add_resource(OptionsOverride, '/<id>/predict', endpoint='predict')
         if nbvm is None:
             print("NBVM is NONE!!!")
@@ -197,15 +208,15 @@ class ExplanationDashboard:
             else:
                 return "Unknown model id."
 
-        @app.route('/<id>/predict', methods=['POST', 'OPTIONS'])
-        @cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, automatic_options=False, send_wildcard=True)
-        def predict(id):
-            print("Returning Predicton!!!!")
-            data = request.get_json(force=True)
-            if id in ExplanationDashboard.explanations:
-                response = jsonify(ExplanationDashboard.explanations[id].on_predict(data))
-                # response.headers.add("Access-Control-Allow-Origin", "*")
-                return response
+        # @app.route('/<id>/predict', methods=['POST', 'OPTIONS'])
+        # @cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, automatic_options=False, send_wildcard=True)
+        # def predict(id):
+        #     print("Returning Predicton!!!!")
+        #     data = request.get_json(force=True)
+        #     if id in ExplanationDashboard.explanations:
+        #         response = jsonify(ExplanationDashboard.explanations[id].on_predict(data))
+        #         # response.headers.add("Access-Control-Allow-Origin", "*")
+        #         return response
 
         @app.after_request
         def after_request(response):
