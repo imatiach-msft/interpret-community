@@ -43,6 +43,7 @@ nbvm_global = _get_nbvm()
 instance_name_global = nbvm_global["instance"]
 domain_suffix_global = nbvm_global["domainsuffix"]
 nbvm_origin_global = "https://{}.{}".format(instance_name_global, domain_suffix_global)
+nbvm_origin2_global = "https://{}-5000.{}".format(instance_name, domain_suffix)
 
 class ExplanationDashboard:
     """Explanation Dashboard Class.
@@ -187,8 +188,8 @@ class ExplanationDashboard:
             else:
                 return "Unknown model id."
 
-        # @cross_origin(origins=nbvm_origin_global, headers=['Content-Type'], automatic_options=True)
-        @app.route('/<id>/predict', methods=['GET', 'POST', 'OPTIONS'])
+        #@cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], automatic_options=True)
+        @app.route('/<id>/predict', methods=['POST'])
         def predict(id):
             print("Returning Predicton!!!!")
             data = request.get_json(force=True)
