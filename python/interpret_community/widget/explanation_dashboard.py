@@ -99,9 +99,7 @@ class ExplanationDashboard:
                     # response.headers.add("Access-Control-Allow-Origin", "*")
                     return response
 
-        predict.provide_automatic_options = False
-        predict.methods = ['POST', 'OPTIONS']
-        app.add_url_rule('/<id>/predict', 'predict', predict)
+        app.add_url_rule('/<id>/predict', 'predict', predict, provide_automatic_options=False, methods=['POST', 'OPTIONS'])
         api = Api(app)
 
         # @app.route('/<id>/predict', methods=['POST', 'OPTIONS'])
