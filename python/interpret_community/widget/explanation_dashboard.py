@@ -189,7 +189,7 @@ class ExplanationDashboard:
                 return "Unknown model id."
 
         @app.route('/<id>/predict', methods=['POST', 'OPTIONS'])
-        @cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, automatic_options=True, send_wildcard=True)
+        @cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, automatic_options=False, send_wildcard=True)
         def predict(id):
             print("Returning Predicton!!!!")
             data = request.get_json(force=True)
@@ -198,16 +198,16 @@ class ExplanationDashboard:
                 # response.headers.add("Access-Control-Allow-Origin", "*")
                 return response
 
-        # @app.after_request
-        # def after_request(response):
-        #     print("In after request!!!!")
-        #     header = response.headers
-        #     nbvm = _get_nbvm()
-        #     instance_name = nbvm["instance"]
-        #     domain_suffix = nbvm["domainsuffix"]
-        #     header['Access-Control-Allow-Origin'] = "https://{}.{}".format(instance_name, domain_suffix)
-        #     header['Access-Control-Allow-Credentials'] = 'true'
-        #     return response
+        @app.after_request
+        def after_request(response):
+            print("In after request!!!!")
+            header = response.headers
+            nbvm = _get_nbvm()
+            instance_name = nbvm["instance"]
+            domain_suffix = nbvm["domainsuffix"]
+            header['Access-Control-Allow-Origin'] = "https://{}.{}".format(instance_name, domain_suffix)
+            header['Access-Control-Allow-Credentials'] = 'true'
+            return response
 
     def __init__(self, explanation, model=None, *, dataset=None,
                  true_y=None, classes=None, features=None, port=None, use_cdn=True,
