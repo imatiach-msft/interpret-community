@@ -8,24 +8,21 @@ const RenderDashboard = (divId, data) => {
   let generatePrediction = (postData) => {
     //data.origin !== undefined
     var headers_data = {
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+        'Accept': 'application/json,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
         'Content-Type': 'application/json',
     }
     axios.defaults.withCredentials = true
     var axios_options = { headers: headers_data, withCredentials: true }
-    axios.get('https://nbvm-5000.eastus2.instances.azureml.net', axios_options)
-    .then((response_get) => {
-        axios.options(data.predictionUrl, axios_options)
-        .then((response_options) => {
-            axios.post(data.predictionUrl, JSON.stringify(postData), axios_options)
-            .then((response) => {
-                return response.data
-            })
-            .catch(function (error) {
-                throw new Error(error)
-            })
+    //axios.get('https://nbvm-5000.eastus2.instances.azureml.net', axios_options)
+    //.then((response_get) => {  
+    //})
+    axios.post(data.predictionUrl, JSON.stringify(postData), axios_options)
+        .then((response) => {
+            return response.data
         })
-    })
+        .catch(function (error) {
+            throw new Error(error)
+        })
   }
 
   ReactDOM.render(<ExplanationDashboard
