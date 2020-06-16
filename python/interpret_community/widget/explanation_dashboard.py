@@ -92,7 +92,7 @@ class ExplanationDashboard:
             domain_suffix = nbvm["domainsuffix"]
             nbvm_origin1 = "https://{}.{}".format(instance_name, domain_suffix)
             nbvm_origin2 = "https://{}-5000.{}".format(instance_name, domain_suffix)
-            cors = CORS(app, resources={r'/*': {'origins': [nbvm_origin1, nbvm_origin2]}}, supports_credentials=True)
+            cors = CORS(app, origins=[nbvm_origin1, nbvm_origin2], supports_credentials=True)
             # cors = CORS(app, resources={r'/*': {'origins': '*'}})
         app.config['CORS_HEADERS'] = 'Content-Type'
         logging.getLogger('flask_cors').level = logging.DEBUG
@@ -197,16 +197,16 @@ class ExplanationDashboard:
                 # response.headers.add("Access-Control-Allow-Origin", "*")
                 return response
 
-        @app.after_request
-        def after_request(response):
-            print("In after request!!!!")
-            header = response.headers
-            nbvm = _get_nbvm()
-            instance_name = nbvm["instance"]
-            domain_suffix = nbvm["domainsuffix"]
-            header['Access-Control-Allow-Origin'] = "https://{}.{}".format(instance_name, domain_suffix)
-            header['Access-Control-Allow-Credentials'] = 'true'
-            return response
+        # @app.after_request
+        # def after_request(response):
+        #     print("In after request!!!!")
+        #     header = response.headers
+        #     nbvm = _get_nbvm()
+        #     instance_name = nbvm["instance"]
+        #     domain_suffix = nbvm["domainsuffix"]
+        #     header['Access-Control-Allow-Origin'] = "https://{}.{}".format(instance_name, domain_suffix)
+        #     header['Access-Control-Allow-Credentials'] = 'true'
+        #     return response
 
     def __init__(self, explanation, model=None, *, dataset=None,
                  true_y=None, classes=None, features=None, port=None, use_cdn=True,
