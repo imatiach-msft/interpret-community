@@ -87,6 +87,7 @@ class ExplanationDashboard:
         nbvm = _get_nbvm()
         app = Flask(__name__)
 
+        @cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, automatic_options=False, send_wildcard=True)
         def predict(id):
             if request.method == 'OPTIONS':
                 print("overriding options!")
