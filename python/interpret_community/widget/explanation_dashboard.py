@@ -126,7 +126,7 @@ class ExplanationDashboard:
             domain_suffix = nbvm["domainsuffix"]
             nbvm_origin1 = "https://{}.{}".format(instance_name, domain_suffix)
             nbvm_origin2 = "https://{}-5000.{}".format(instance_name, domain_suffix)
-            cors = CORS(app, origins=[nbvm_origin1, nbvm_origin2], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, send_wildcard=True)
+            # cors = CORS(app, origins=[nbvm_origin1, nbvm_origin2], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, send_wildcard=True)
             cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, automatic_options=False, send_wildcard=True)(predict)
             # cors = CORS(app, resources={r'/*': {'origins': '*'}})
         app.config['CORS_HEADERS'] = 'Content-Type'
@@ -211,6 +211,7 @@ class ExplanationDashboard:
             return True
 
         @app.route('/')
+        @cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, automatic_options=False, send_wildcard=True)
         def hello():
             return "No global list view supported at this time."
 
