@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
-from flask_restplus import Resource, Api
 from jinja2 import Environment, PackageLoader
 from IPython.display import display, HTML
 from interpret.utils.environment import EnvironmentDetector, is_cloud_env
@@ -100,7 +99,6 @@ class ExplanationDashboard:
                     return response
 
         app.add_url_rule('/<id>/predict', 'predict', predict, provide_automatic_options=False, methods=['POST', 'OPTIONS'])
-        api = Api(app)
 
         # @app.route('/<id>/predict', methods=['POST', 'OPTIONS'])
         # class OptionsOverride(Resource):
@@ -117,6 +115,7 @@ class ExplanationDashboard:
         #             return response
 
         # api.add_resource(OptionsOverride, '/<id>/predict', endpoint='predict')
+        logging.getLogger('flask_cors').level = logging.DEBUG
         if nbvm is None:
             print("NBVM is NONE!!!")
             cors = CORS(app)
@@ -131,7 +130,6 @@ class ExplanationDashboard:
             cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, automatic_options=False, send_wildcard=True)(predict)
             # cors = CORS(app, resources={r'/*': {'origins': '*'}})
         app.config['CORS_HEADERS'] = 'Content-Type'
-        logging.getLogger('flask_cors').level = logging.DEBUG
 
         def __init__(self, port):
             self.port = port
