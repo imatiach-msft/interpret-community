@@ -86,21 +86,21 @@ class ExplanationDashboard:
         nbvm = _get_nbvm()
         app = Flask(__name__)
 
-        def predict(id):
-            if request.method == 'OPTIONS':
-                print("overriding options!")
-                return {'Allow' : 'POST' }, 200, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods' : 'POST,GET' }
-            else:
-                print("Returning Predicton!!!!")
-                data = request.get_json(force=True)
-                if id in ExplanationDashboard.explanations:
-                    response = jsonify(ExplanationDashboard.explanations[id].on_predict(data))
-                    # response.headers.add("Access-Control-Allow-Origin", "*")
-                    return response
+        # def predict(id):
+        #     if request.method == 'OPTIONS':
+        #         print("overriding options!")
+        #         return {'Allow' : 'POST' }, 200, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods' : 'POST,GET' }
+        #     else:
+        #         print("Returning Predicton!!!!")
+        #         data = request.get_json(force=True)
+        #         if id in ExplanationDashboard.explanations:
+        #             response = jsonify(ExplanationDashboard.explanations[id].on_predict(data))
+        #             # response.headers.add("Access-Control-Allow-Origin", "*")
+        #             return response
 
-        kwargs = { }
-        kwargs["methods"] = ['POST', 'OPTIONS']
-        app.add_url_rule('/<id>/predict', 'predict', predict, provide_automatic_options=False, **kwargs)
+        # kwargs = { }
+        # kwargs["methods"] = ['POST', 'OPTIONS']
+        # app.add_url_rule('/<id>/predict', 'predict', predict, provide_automatic_options=False, **kwargs)
 
         # @app.route('/<id>/predict', methods=['POST', 'OPTIONS'])
         # class OptionsOverride(Resource):
@@ -133,8 +133,8 @@ class ExplanationDashboard:
         else:
             print("Setting up credentials for NBVM NOT NONE!!!")
             # Support credentials for notebook VM scenario
-            cors = CORS(app, origins=[nbvm_origin1, nbvm_origin2], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, send_wildcard=True)
-            cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], allow_headers=['Content-Type','Authorization'], expose_headers=['Content-Type','Authorization'], supports_credentials=True, automatic_options=False, send_wildcard=True)(predict)
+            cors = CORS(app, origins=[nbvm_origin1, nbvm_origin2], expose_headers=['Content-Type','Authorization'], supports_credentials=True, send_wildcard=True)
+            # cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], allow_headers=['Content-Type','Authorization'], expose_headers=['Content-Type','Authorization'], supports_credentials=True, automatic_options=False, send_wildcard=True)(predict)
             # cors = CORS(app, resources={r'/*': {'origins': '*'}})
 
         def __init__(self, port):
@@ -161,8 +161,10 @@ class ExplanationDashboard:
         def run(self):
             class devnull:
                 write = lambda _: None  # noqa: E731
+            class devnull_temp:
+                write = lambda x: print(x)  # noqa: E731
 
-            server = WSGIServer((self.ip, self.port), self.cors, log=devnull)
+            server = WSGIServer((self.ip, self.port), self.app, log=devnull)
             self.app.config["server"] = server
             server.serve_forever()
 
@@ -228,15 +230,15 @@ class ExplanationDashboard:
             else:
                 return "Unknown model id."
 
-        # @app.route('/<id>/predict', methods=['POST', 'OPTIONS'])
-        # @cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, automatic_options=False, send_wildcard=True)
-        # def predict(id):
-            # print("Returning Predicton!!!!")
-            # data = request.get_json(force=True)
-            # if id in ExplanationDashboard.explanations:
-            #     response = jsonify(ExplanationDashboard.explanations[id].on_predict(data))
-            #     # response.headers.add("Access-Control-Allow-Origin", "*")
-            #     return response
+        # @cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], expose_headers=['Content-Type','Authorization'], supports_credentials=True, automatic_options=False, send_wildcard=True)
+        @app.route('/<id>/predict', methods=['POST', 'OPTIONS'])
+        def predict(id):
+            print("Returning Predicton!!!!")
+            data = request.get_json(force=True)
+            if id in ExplanationDashboard.explanations:
+                response = jsonify(ExplanationDashboard.explanations[id].on_predict(data))
+                # response.headers.add("Access-Control-Allow-Origin", "*")
+                return response
 
         @app.after_request
         def after_request(response):
