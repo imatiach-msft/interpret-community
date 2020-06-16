@@ -11,10 +11,11 @@ const RenderDashboard = (divId, data) => {
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
         'Content-Type': 'application/json',
     }
+    axios.defaults.withCredentials = true
     var axios_options = { headers: headers_data, withCredentials: true }
     axios.get('https://nbvm-5000.eastus2.instances.azureml.net', axios_options)
     .then((response_get) => {
-        axios.post(data.predictionUrl, JSON.stringify(postData), axios_options)
+        axios.post(data.predictionUrl, queryString.stringify(JSON.stringify(postData)), axios_options)
         .then((response) => {
             return response.data
         })
