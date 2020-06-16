@@ -49,7 +49,8 @@ nbvm_origin2_global = "https://{}-5000.{}".format(instance_name_global, domain_s
 
 class OptionsOverride(flask_restful.Resource):
     def options(self):
-         return {'Allow' : 'POST' }, 200, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods' : 'POST,GET' }
+        print("overriding options!")
+        return {'Allow' : 'POST' }, 200, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods' : 'POST,GET' }
 
 class ExplanationDashboard:
     """Explanation Dashboard Class.
@@ -90,7 +91,7 @@ class ExplanationDashboard:
         nbvm = _get_nbvm()
         app = Flask(__name__)
         api = flask_restful.Api(app)
-        api.add_resource(OptionsOverride, '/')
+        api.add_resource(OptionsOverride, '/<id>/predict', endpoint='predict')
         if nbvm is None:
             print("NBVM is NONE!!!")
             cors = CORS(app)
