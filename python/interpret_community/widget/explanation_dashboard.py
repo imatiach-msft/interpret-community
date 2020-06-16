@@ -43,7 +43,7 @@ nbvm_global = _get_nbvm()
 instance_name_global = nbvm_global["instance"]
 domain_suffix_global = nbvm_global["domainsuffix"]
 nbvm_origin_global = "https://{}.{}".format(instance_name_global, domain_suffix_global)
-nbvm_origin2_global = "https://{}-5000.{}".format(instance_name, domain_suffix)
+nbvm_origin2_global = "https://{}-5000.{}".format(instance_name_global, domain_suffix_global)
 
 class ExplanationDashboard:
     """Explanation Dashboard Class.
