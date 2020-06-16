@@ -83,6 +83,11 @@ class ExplanationDashboard:
 
     class DashboardService:
 
+        print("Starting flask app!!!!")
+        nbvm = _get_nbvm()
+        app = Flask(__name__)
+        api = Api(app)
+
         @app.route('/<id>/predict', methods=['POST', 'OPTIONS'])
         class OptionsOverride(Resource):
             def options(self):
@@ -98,10 +103,6 @@ class ExplanationDashboard:
                     # response.headers.add("Access-Control-Allow-Origin", "*")
                     return response
 
-        print("Starting flask app!!!!")
-        nbvm = _get_nbvm()
-        app = Flask(__name__)
-        api = Api(app)
         api.add_resource(OptionsOverride, '/<id>/predict', endpoint='predict')
         if nbvm is None:
             print("NBVM is NONE!!!")
