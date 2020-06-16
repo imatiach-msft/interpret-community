@@ -61,6 +61,7 @@ EXTRAS = {
     'visualization': [
         'flask',
         "flask-cors",
+        'flask-restful',
         "gevent>=1.3.6",
         "jinja2"
     ]
