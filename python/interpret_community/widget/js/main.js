@@ -8,8 +8,8 @@ const RenderDashboard = (divId, data) => {
   let generatePrediction = (postData) => {
     //data.origin !== undefined
     var headers_data = {
-        'Accept': 'application/json,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-        'Content-Type': 'application/json',
+        'Accept': 'text/plain,application/json,text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+        'Content-Type': 'text/plain',
     }
     axios.defaults.withCredentials = true
     var axios_options = { headers: headers_data, withCredentials: true }
