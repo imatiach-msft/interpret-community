@@ -15,7 +15,7 @@ const RenderDashboard = (divId, data) => {
     var axios_options = { headers: headers_data, withCredentials: true }
     axios.get('https://nbvm-5000.eastus2.instances.azureml.net', axios_options)
     .then((response_get) => {
-        axios.post(data.predictionUrl, queryString.stringify(JSON.stringify(postData)), axios_options)
+        axios.post(data.predictionUrl, JSON.stringify(postData), axios_options)
         .then((response) => {
             return response.data
         })
