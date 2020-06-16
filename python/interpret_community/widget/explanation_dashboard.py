@@ -86,16 +86,12 @@ class ExplanationDashboard:
         print("Starting flask app!!!!")
         nbvm = _get_nbvm()
         app = Flask(__name__)
-        api = Api(app)
 
-        @app.route('/<id>/predict', methods=['POST', 'OPTIONS'])
-        class OptionsOverride(Resource):
-            def options(self):
+        def predict(id):
+            if request.method == 'OPTIONS':
                 print("overriding options!")
                 return {'Allow' : 'POST' }, 200, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods' : 'POST,GET' }
-
-            @cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, automatic_options=False, send_wildcard=True)
-            def post(self, id):
+            else:
                 print("Returning Predicton!!!!")
                 data = request.get_json(force=True)
                 if id in ExplanationDashboard.explanations:
@@ -103,7 +99,26 @@ class ExplanationDashboard:
                     # response.headers.add("Access-Control-Allow-Origin", "*")
                     return response
 
-        api.add_resource(OptionsOverride, '/<id>/predict', endpoint='predict')
+        predict.provide_automatic_options = False
+        predict.methods = ['POST', 'OPTIONS']
+        app.add_url_rule('/<id>/predict', 'predict', predict)
+        api = Api(app)
+
+        # @app.route('/<id>/predict', methods=['POST', 'OPTIONS'])
+        # class OptionsOverride(Resource):
+        #     def options(self):
+        #         print("overriding options!")
+        #         return {'Allow' : 'POST' }, 200, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods' : 'POST,GET' }
+
+        #     @cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, automatic_options=False, send_wildcard=True)
+        #     def post(self, id):
+        #         print("Returning Predicton!!!!")
+        #         data = request.get_json(force=True)
+        #         if id in ExplanationDashboard.explanations:
+        #             response = jsonify(ExplanationDashboard.explanations[id].on_predict(data))
+        #             return response
+
+        # api.add_resource(OptionsOverride, '/<id>/predict', endpoint='predict')
         if nbvm is None:
             print("NBVM is NONE!!!")
             cors = CORS(app)
@@ -212,12 +227,12 @@ class ExplanationDashboard:
         # @app.route('/<id>/predict', methods=['POST', 'OPTIONS'])
         # @cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, automatic_options=False, send_wildcard=True)
         # def predict(id):
-        #     print("Returning Predicton!!!!")
-        #     data = request.get_json(force=True)
-        #     if id in ExplanationDashboard.explanations:
-        #         response = jsonify(ExplanationDashboard.explanations[id].on_predict(data))
-        #         # response.headers.add("Access-Control-Allow-Origin", "*")
-        #         return response
+            # print("Returning Predicton!!!!")
+            # data = request.get_json(force=True)
+            # if id in ExplanationDashboard.explanations:
+            #     response = jsonify(ExplanationDashboard.explanations[id].on_predict(data))
+            #     # response.headers.add("Access-Control-Allow-Origin", "*")
+            #     return response
 
         @app.after_request
         def after_request(response):
