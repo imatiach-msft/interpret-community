@@ -116,6 +116,11 @@ class ExplanationDashboard:
 
         # api.add_resource(OptionsOverride, '/<id>/predict', endpoint='predict')
         logging.getLogger('flask_cors').level = logging.DEBUG
+        app.config['CORS_HEADERS'] = ['Content-Type', 'Authorization']
+        app.config['CORS_AUTOMATIC_OPTIONS'] = True
+        app.config['CORS_ORIGINS'] = [nbvm_origin1, nbvm_origin2]
+        app.config['CORS_METHODS'] = "GET,POST,OPTIONS"
+        app.config['CORS_SUPPORTS_CREDENTIALS'] = True
         if nbvm is None:
             print("NBVM is NONE!!!")
             cors = CORS(app)
@@ -126,12 +131,9 @@ class ExplanationDashboard:
             domain_suffix = nbvm["domainsuffix"]
             nbvm_origin1 = "https://{}.{}".format(instance_name, domain_suffix)
             nbvm_origin2 = "https://{}-5000.{}".format(instance_name, domain_suffix)
-            # cors = CORS(app, origins=[nbvm_origin1, nbvm_origin2], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, send_wildcard=True)
+            cors = CORS(app, origins=[nbvm_origin1, nbvm_origin2], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True, send_wildcard=True)
             cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], allow_headers=['Content-Type','Authorization'], expose_headers=['Content-Type','Authorization'], supports_credentials=True, automatic_options=False, send_wildcard=True)(predict)
             # cors = CORS(app, resources={r'/*': {'origins': '*'}})
-        app.config['CORS_HEADERS'] = ['Content-Type', 'Authorization']
-        app.config['CORS_AUTOMATIC_OPTIONS'] = True
-        app.config['CORS_ORIGINS'] = [nbvm_origin1, nbvm_origin2]
 
         def __init__(self, port):
             self.port = port
