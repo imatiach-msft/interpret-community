@@ -93,7 +93,7 @@ class ExplanationDashboard:
             domain_suffix = nbvm["domainsuffix"]
             nbvm_origin1 = "https://{}.{}".format(instance_name, domain_suffix)
             nbvm_origin2 = "https://{}-5000.{}".format(instance_name, domain_suffix)
-            cors = CORS(app, origins=[nbvm_origin1, nbvm_origin2], supports_credentials=True)
+            cors = CORS(app, origins=[nbvm_origin1, nbvm_origin2], expose_headers=['POST', 'GET', 'OPTIONS'], supports_credentials=True)
             # cors = CORS(app, resources={r'/*': {'origins': '*'}})
         app.config['CORS_HEADERS'] = 'Content-Type'
         logging.getLogger('flask_cors').level = logging.DEBUG
