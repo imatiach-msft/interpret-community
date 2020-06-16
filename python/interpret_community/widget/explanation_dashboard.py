@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
-from flask.ext import restful
+import flask_restful
 from jinja2 import Environment, PackageLoader
 from IPython.display import display, HTML
 from interpret.utils.environment import EnvironmentDetector, is_cloud_env
@@ -47,7 +47,7 @@ nbvm_origin_global = "https://{}.{}".format(instance_name_global, domain_suffix_
 nbvm_origin2_global = "https://{}-5000.{}".format(instance_name_global, domain_suffix_global)
 
 
-class OptionsOverride(restful.Resource):
+class OptionsOverride(flask_restful.Resource):
     def options(self):
          return {'Allow' : 'POST' }, 200, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods' : 'POST,GET' }
 
@@ -89,7 +89,7 @@ class ExplanationDashboard:
         print("Starting flask app!!!!")
         nbvm = _get_nbvm()
         app = Flask(__name__)
-        api = restful.Api(app)
+        api = flask_restful.Api(app)
         api.add_resource(OptionsOverride, '/')
         if nbvm is None:
             print("NBVM is NONE!!!")
