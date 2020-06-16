@@ -188,8 +188,8 @@ class ExplanationDashboard:
             else:
                 return "Unknown model id."
 
-        #@cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], automatic_options=True)
         @app.route('/<id>/predict', methods=['POST'])
+        @cross_origin(origins=[nbvm_origin_global, nbvm_origin2_global], headers=['Content-Type','Authorization'], automatic_options=True)
         def predict(id):
             print("Returning Predicton!!!!")
             data = request.get_json(force=True)
