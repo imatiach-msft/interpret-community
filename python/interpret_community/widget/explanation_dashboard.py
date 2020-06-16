@@ -162,7 +162,7 @@ class ExplanationDashboard:
             class devnull:
                 write = lambda _: None  # noqa: E731
 
-            server = WSGIServer((self.ip, self.port), self.app, log=devnull)
+            server = WSGIServer((self.ip, self.port), self.cors, log=devnull)
             self.app.config["server"] = server
             server.serve_forever()
 
