@@ -95,6 +95,8 @@ def _get_raw_feature_importances(importance_values, raw_to_output_feature_maps):
     if issparse(raw_to_output_map):
         if len(importance_values.shape) > 2:
             raw_importances = _multiply_sparse_matrix_3d_numpy_tensor(importance_values, raw_to_output_map.T)
+        elif orig_single_dimensional_importances:
+            raw_importances = raw_to_output_map.T.dot(importance_values.T).T
         else:
             raw_importances = raw_to_output_map.dot(importance_values.T).T
             if issparse(raw_importances):

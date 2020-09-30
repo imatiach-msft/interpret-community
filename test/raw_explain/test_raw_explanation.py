@@ -5,6 +5,7 @@
 import pytest
 
 import numpy as np
+import pandas as pd
 
 from common_utils import create_sklearn_svm_classifier, create_sklearn_random_forest_regressor, \
     create_sklearn_linear_regressor, create_multiclass_sparse_newsgroups_data, \
@@ -123,6 +124,28 @@ class TestRawExplanations:
 
         global_raw_explanation = global_explanation.get_raw_explanation([feature_map])
         self.validate_global_raw_explanation_regression(global_explanation, global_raw_explanation, feature_map)
+
+    def test_get_global_raw_explanations_classification_pandas(self, iris, mimic_explainer):
+        x_train = pd.DataFrame(iris[DatasetConstants.X_TRAIN])
+        x_test = pd.DataFrame(iris[DatasetConstants.X_TEST])
+        model = create_sklearn_svm_classifier(x_train, iris[DatasetConstants.Y_TRAIN])
+
+        exp = mimic_explainer(model, x_train, LinearExplainableModel, features=iris[DatasetConstants.FEATURES],
+                                classes=iris[DatasetConstants.CLASSES])
+
+        global_explanation = exp.explain_global(x_test)
+        assert not global_explanation.is_raw
+        assert not global_explanation.is_engineered
+        num_engineered_feats = len(iris[DatasetConstants.FEATURES])
+
+        feature_map = np.eye(num_engineered_feats - 1, num_engineered_feats)
+        feature_names = [str(i) for i in range(feature_map.shape[0])]
+
+        global_raw_explanation = global_explanation.get_raw_explanation(
+            [feature_map], raw_feature_names=feature_names[:feature_map.shape[0]])
+
+        self.validate_global_raw_explanation_classification(global_explanation, global_raw_explanation, feature_map,
+                                                            iris[DatasetConstants.CLASSES], feature_names)
 
     def test_get_local_raw_explanations_sparse_classification(self, mimic_explainer):
         x_train, x_test, y_train, _, classes, _ = create_multiclass_sparse_newsgroups_data()
